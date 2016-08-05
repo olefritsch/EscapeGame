@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "EscapeGame.h"
-#include "PositionReporter.h"
+#include "DoorComponent.h"
 
 
 // Sets default values for this component's properties
-UPositionReporter::UPositionReporter()
+UDoorComponent::UDoorComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -17,23 +17,30 @@ UPositionReporter::UPositionReporter()
 
 
 // Called when the game starts
-void UPositionReporter::BeginPlay()
+void UDoorComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FString ObjectName = GetOwner()->GetName();
-	FString ObjectPosition = GetOwner()->GetTransform().GetLocation().ToString();
-	
-	UE_LOG(LogTemp, Warning, TEXT("%s - Position: %s"), *ObjectName, *ObjectPosition);
-	
+	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
 
 // Called every frame
-void UPositionReporter::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
+void UDoorComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
-	// ...
+	if (PressurePlate->IsOverlappingActor(ActorThatOpens))
+	{
+		OpenDoor();
+	}
+}
+
+//Opens the Door
+void UDoorComponent::OpenDoor()
+{
+	AActor* Owner = GetOwner();
+	FRotator OpenDoorRotation = FRotator(0.0f, OpenDoorAngle, 0.0f);
+	Owner->SetActorRotation(OpenDoorRotation);
 }
 
