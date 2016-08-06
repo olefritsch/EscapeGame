@@ -23,6 +23,13 @@ public:
 
 		
 private:
+	void Grab();
+	void Release();
+
+	UPhysicsHandleComponent* PhysicsHandle = nullptr;
+	UInputComponent* InputComponent = nullptr;
+
 	float Reach = 100.0f;
+
 
 };
