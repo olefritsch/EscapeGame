@@ -35,43 +35,43 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 	
 	///If PhysicsHandle is attached move grabbed object
 	if (PhysicsHandle->GrabbedComponent)
-	{
-		///Get player view point
-		FVector PlayerViewPointLocation;
-		FRotator PlayerViewPointRotation;
-		GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
+		PhysicsHandle->SetTargetLocation(GetReachLineEnd());	
+}
 
-		FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
 
-		PhysicsHandle->SetTargetLocation(LineTraceEnd);
-	}
-		
+FVector UGrabber::GetReachLineStart()
+{
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
+	return PlayerViewPointLocation;
+}
+
+
+FVector UGrabber::GetReachLineEnd()
+{
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
+	return PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
 }
 
 
 const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 {
-	///Get player view point
-	FVector PlayerViewPointLocation;
-	FRotator PlayerViewPointRotation;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
-
-	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
-
-	
-	FHitResult Hit;
+	FHitResult HitResult;
 	FCollisionQueryParams TraceHitParams(FName(TEXT("")), false, GetOwner()); // ([Label], [Complex trace], [Ignore])
 	
 	//Get LineTraceHit (if any)
-	GetWorld()->LineTraceSingleByObjectType(OUT Hit, PlayerViewPointLocation, LineTraceEnd, FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), TraceHitParams);
+	GetWorld()->LineTraceSingleByObjectType(OUT HitResult, GetReachLineStart(), GetReachLineEnd(), FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody), TraceHitParams);
 
-	AActor* ActorHit = Hit.GetActor();
+	AActor* ActorHit = HitResult.GetActor();
 	if (ActorHit)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *(ActorHit->GetName()));
+		UE_LOG(LogTemp, Warning, TEXT("HitResult: %s"), *(ActorHit->GetName()));
 	}
 	
-	return Hit;
+	return HitResult;
 }
 
 
@@ -124,7 +124,7 @@ void UGrabber::Release()
 {
 	if (PhysicsHandle->GrabbedComponent)
 	{
-		PhysicsHandle->ReleaseComponent();
+		PhysicsHandle->ReleaseComponent(); 
 	}
 }
 

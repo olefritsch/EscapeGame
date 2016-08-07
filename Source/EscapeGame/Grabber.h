@@ -26,6 +26,8 @@ public:
 		
 private:
 	
+	FVector GetReachLineStart();
+	FVector GetReachLineEnd();
 	const FHitResult GetFirstPhysicsBodyInReach();
 
 	void Grab();
