@@ -25,6 +25,7 @@ public:
 private:
 	void OpenDoor();
 	void CloseDoor();
+	float GetTotalMassOfActorsOnPlate();
 
 	UPROPERTY(EditAnywhere)
 		ATriggerVolume* PressurePlate;
@@ -35,11 +36,16 @@ private:
 	UPROPERTY(EditAnywhere)
 		float CloseDoorDelay = 1.0f;
 
+	UPROPERTY(EditAnywhere)
+		float TriggerPlateThreshold = 40.f;
+
 	UWorld* World;
 
 	AActor* Owner;
 	AActor* ActorThatOpens;
 
 	float LastDoorOpenTime;
+
+	
 
 };

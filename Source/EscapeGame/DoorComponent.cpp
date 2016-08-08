@@ -31,7 +31,7 @@ void UDoorComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
-	if (PressurePlate->IsOverlappingActor(ActorThatOpens))
+	if (GetTotalMassOfActorsOnPlate() > TriggerPlateThreshold)
 	{
 		OpenDoor();
 		LastDoorOpenTime = World->GetTimeSeconds();
@@ -41,6 +41,20 @@ void UDoorComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActor
 	{
 		CloseDoor();
 	}
+}
+
+float UDoorComponent::GetTotalMassOfActorsOnPlate()
+{
+	float TotalMass = 0.0f;
+	TArray<AActor*> OverlappingActors;
+	PressurePlate->GetOverlappingActors(OverlappingActors);
+
+	for (const auto& Actor : OverlappingActors)
+	{
+		TotalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+	}
+
+	return TotalMass;
 }
 
 //Opens the Door
