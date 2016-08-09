@@ -34,6 +34,7 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 	
 	///If PhysicsHandle is attached move grabbed object
+	if (!PhysicsHandle) return;
 	if (PhysicsHandle->GrabbedComponent)
 		PhysicsHandle->SetTargetLocation(GetReachLineEnd());	
 }
@@ -80,14 +81,8 @@ void UGrabber::FindPhysicsHandle()
 {
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 
-	if (PhysicsHandle)
-	{
-		//GG
-	}
-	else
-	{
+	if (!PhysicsHandle)
 		UE_LOG(LogTemp, Error, TEXT("ERROR: %s missing PhysicsHandleComponent"), *(GetOwner()->GetName()));
-	}
 
 }
 
@@ -114,6 +109,7 @@ void UGrabber::Grab()
 	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
 	AActor* ActorHit = HitResult.GetActor();
 
+	if (!PhysicsHandle) return;
 	if (ActorHit)
 		PhysicsHandle->GrabComponent(ComponentToGrab, NAME_None, ComponentToGrab->GetOwner()->GetActorLocation(), true);
 	
@@ -122,6 +118,7 @@ void UGrabber::Grab()
 
 void UGrabber::Release()
 {
+	if (!PhysicsHandle) return;
 	if (PhysicsHandle->GrabbedComponent)
 	{
 		PhysicsHandle->ReleaseComponent(); 
