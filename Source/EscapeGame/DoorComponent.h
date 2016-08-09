@@ -25,8 +25,6 @@ public:
 
 			
 private:
-	void OpenDoor();
-	void CloseDoor();
 	float GetTotalMassOfActorsOnPlate();
 
 	UPROPERTY(EditAnywhere)
