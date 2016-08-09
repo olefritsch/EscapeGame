@@ -5,6 +5,8 @@
 #include "Components/ActorComponent.h"
 #include "DoorComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenRequest);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCloseRequest);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ESCAPEGAME_API UDoorComponent : public UActorComponent
@@ -31,13 +33,13 @@ private:
 		ATriggerVolume* PressurePlate = nullptr;
 
 	UPROPERTY(EditAnywhere)
-		float OpenDoorAngle = 60.0f;
-
-	UPROPERTY(EditAnywhere)
-		float CloseDoorDelay = 1.0f;
-
-	UPROPERTY(EditAnywhere)
 		float TriggerPlateThreshold = 40.f;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnOpenRequest OpenRequest;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnCloseRequest CloseRequest;
 
 	UWorld* World;
 	AActor* Owner = nullptr;

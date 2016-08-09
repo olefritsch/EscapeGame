@@ -24,7 +24,7 @@ void UDoorComponent::BeginPlay()
 	Owner = GetOwner();
 
 	if (!PressurePlate)
-		UE_LOG(LogTemp, Error, TEXT("NullPtr error: PressurePlate not initialized correctly"))
+		UE_LOG(LogTemp, Error, TEXT("NullPtr error: %s missig pressure plate"), *(GetOwner()->GetName()))
 }
 
 
@@ -35,13 +35,11 @@ void UDoorComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActor
 
 	if (GetTotalMassOfActorsOnPlate() > TriggerPlateThreshold)
 	{
-		OpenDoor();
-		LastDoorOpenTime = World->GetTimeSeconds();
+		OpenRequest.Broadcast();
 	}
-
-	if ((World->GetTimeSeconds() - LastDoorOpenTime) > CloseDoorDelay)
+	else
 	{
-		CloseDoor();
+		CloseRequest.Broadcast();
 	}
 }
 
@@ -59,17 +57,5 @@ float UDoorComponent::GetTotalMassOfActorsOnPlate()
 	}
 
 	return TotalMass;
-}
-
-//Opens the Door
-void UDoorComponent::OpenDoor()
-{
-	Owner->SetActorRotation(FRotator(0.0f, OpenDoorAngle, 0.0f));
-}
-
-//Closes the Door
-void UDoorComponent::CloseDoor()
-{
-	Owner->SetActorRotation(FRotator(0.0f, 180.0f, 0.0f));
 }
 
